@@ -327,6 +327,16 @@ export function EmployeesList() {
                       <div className="flex items-center text-sm text-gray-600">
                         <Mail className="h-4 w-4 mr-2" />{employee.email}
                       </div>
+                      {employee.phone && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Phone className="h-4 w-4 mr-2" />{employee.phone}
+                        </div>
+                      )}
+                      {employee.telegram && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <MessageCircle className="h-4 w-4 mr-2" />{employee.telegram}
+                        </div>
+                      )}
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600">
                           Дата найма: {employee.createdAt.toLocaleDateString('ru-RU')}
@@ -434,9 +444,23 @@ export function EmployeesList() {
                   <Phone className="h-5 w-5 text-gray-500" />
                   <div>
                     <p className="font-medium text-gray-900">Телефон</p>
-                    <p className="text-sm text-gray-600">+7 {Math.floor(Math.random() * 900) + 100} {Math.floor(Math.random() * 900) + 100}-{Math.floor(Math.random() * 90) + 10}-{Math.floor(Math.random() * 90) + 10}</p>
+                    <p className="text-sm text-gray-600">{contactEmployee.phone || 'Не указан'}</p>
                   </div>
                 </a>
+                {contactEmployee.telegram && (
+                  <a
+                    href={`https://t.me/${contactEmployee.telegram.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <MessageCircle className="h-5 w-5 text-gray-500" />
+                    <div>
+                      <p className="font-medium text-gray-900">Telegram</p>
+                      <p className="text-sm text-gray-600">{contactEmployee.telegram}</p>
+                    </div>
+                  </a>
+                )}
               </div>
             </div>
           </div>
