@@ -22,7 +22,6 @@ export interface Project {
   deadline: Date;
   createdAt: Date;
   updatedAt: Date;
-  progress: number;
   photosCount: number;
   designsCount: number;
   files: ProjectFile[];

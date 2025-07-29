@@ -8,32 +8,257 @@ import {
   Camera,
   Palette,
   Clock,
-  CheckCircle
+  CheckCircle,
+  X
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
+import { Project } from '../../types/user';
 
+interface CreateProjectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => void;
+}
+
+function CreateProjectModal({ isOpen, onClose, onSave }: CreateProjectModalProps) {
+  const { user, users } = useAuth();
+  const [formData, setFormData] = useState({
+    title: '',
+    albumType: '',
+    description: '',
+    managerId: user?.id || '',
+    photographerId: '',
+    designerId: '',
+    deadline: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const albumTypes = [
+    'Свадебный альбом',
+    'Выпускной альбом',
+    'Детский альбом',
+    'Корпоративный альбом',
+    'Семейный альбом',
+    'Портретная съемка'
+  ];
+
+  const photographers = users.filter(u => u.role === 'photographer');
+  const designers = users.filter(u => u.role === 'designer');
+  const managers = users.filter(u => u.role === 'admin');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const manager = users.find(u => u.id === formData.managerId);
+    const photographer = users.find(u => u.id === formData.photographerId);
+    const designer = users.find(u => u.id === formData.designerId);
+
+    const projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'> = {
+      title: formData.title,
+      albumType: formData.albumType,
+      description: formData.description,
+      status: 'planning',
+      manager: manager || undefined,
+      photographer: photographer || undefined,
+      designer: designer || undefined,
+      deadline: new Date(formData.deadline),
+      photosCount: 0,
+      designsCount: 0,
+      files: []
+    };
+
+    await onSave(projectData);
+    setLoading(false);
+    setFormData({
+      title: '',
+      albumType: '',
+      description: '',
+      managerId: user?.id || '',
+      photographerId: '',
+      designerId: '',
+      deadline: ''
+    });
+    onClose();
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Создать новый проект</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Название проекта *
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Например: Свадебный альбом Анны и Михаила"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Тип альбома *
+              </label>
+              <select
+                name="albumType"
+                value={formData.albumType}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Выберите тип альбома</option>
+                {albumTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Описание проекта
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Опишите детали проекта, особые требования или пожелания клиента"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Менеджер *
+              </label>
+              <select
+                name="managerId"
+                value={formData.managerId}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Выберите менеджера</option>
+                {managers.map(manager => (
+                  <option key={manager.id} value={manager.id}>{manager.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Фотограф
+              </label>
+              <select
+                name="photographerId"
+                value={formData.photographerId}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Выберите фотографа</option>
+                {photographers.map(photographer => (
+                  <option key={photographer.id} value={photographer.id}>{photographer.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Дизайнер
+              </label>
+              <select
+                name="designerId"
+                value={formData.designerId}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Выберите дизайнера</option>
+                {designers.map(designer => (
+                  <option key={designer.id} value={designer.id}>{designer.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Дата завершения *
+            </label>
+            <input
+              type="date"
+              name="deadline"
+              value={formData.deadline}
+              onChange={handleChange}
+              required
+              min={new Date().toISOString().split('T')[0]}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Отмена
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Создание...' : 'Создать проект'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 export function ProjectsList() {
-  const { user } = useAuth();
+  const { user, users } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-
-  const mockProjects = [
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([
     {
       id: '1',
       title: 'Свадебный альбом "Анна & Михаил"',
       albumType: 'Свадебный альбом',
       description: 'Создание премиального свадебного альбома с 150 фотографиями',
       status: 'in-progress',
-      manager: { name: 'Елена Сидорова', id: '3' },
-      photographer: { name: 'Анна Иванова', id: '1' },
-      designer: { name: 'Михаил Петров', id: '2' },
-      deadline: '2024-02-15',
-      createdAt: '2024-01-10',
-      progress: 75,
+      manager: users.find(u => u.id === '3'),
+      photographer: users.find(u => u.id === '1'),
+      designer: users.find(u => u.id === '2'),
+      deadline: new Date('2024-02-15'),
+      createdAt: new Date('2024-01-10'),
+      updatedAt: new Date('2024-01-10'),
       photosCount: 150,
-      designsCount: 8
+      designsCount: 8,
+      files: []
     },
     {
       id: '2',
@@ -41,14 +266,15 @@ export function ProjectsList() {
       albumType: 'Детский альбом',
       description: 'Семейный альбом с детской фотосессией в студии',
       status: 'planning',
-      manager: { name: 'Елена Сидорова', id: '3' },
-      photographer: { name: 'Анна Иванова', id: '1' },
-      designer: null,
-      deadline: '2024-02-20',
-      createdAt: '2024-01-15',
-      progress: 25,
+      manager: users.find(u => u.id === '3'),
+      photographer: users.find(u => u.id === '1'),
+      designer: undefined,
+      deadline: new Date('2024-02-20'),
+      createdAt: new Date('2024-01-15'),
+      updatedAt: new Date('2024-01-15'),
       photosCount: 89,
-      designsCount: 0
+      designsCount: 0,
+      files: []
     },
     {
       id: '3',
@@ -56,14 +282,15 @@ export function ProjectsList() {
       albumType: 'Корпоративный альбом',
       description: 'Презентационный альбом для корпоративных клиентов',
       status: 'review',
-      manager: { name: 'Елена Сидорова', id: '3' },
-      photographer: { name: 'Анна Иванова', id: '1' },
-      designer: { name: 'Михаил Петров', id: '2' },
-      deadline: '2024-02-10',
-      createdAt: '2024-01-05',
-      progress: 90,
+      manager: users.find(u => u.id === '3'),
+      photographer: users.find(u => u.id === '1'),
+      designer: users.find(u => u.id === '2'),
+      deadline: new Date('2024-02-10'),
+      createdAt: new Date('2024-01-05'),
+      updatedAt: new Date('2024-01-05'),
       photosCount: 45,
-      designsCount: 12
+      designsCount: 12,
+      files: []
     },
     {
       id: '4',
@@ -71,16 +298,18 @@ export function ProjectsList() {
       albumType: 'Выпускной альбом',
       description: 'Выпускной альбом для 11 класса с групповыми и индивидуальными фото',
       status: 'completed',
-      manager: { name: 'Елена Сидорова', id: '3' },
-      photographer: { name: 'Анна Иванова', id: '1' },
-      designer: { name: 'Михаил Петров', id: '2' },
-      deadline: '2024-01-30',
-      createdAt: '2023-12-15',
-      progress: 100,
+      manager: users.find(u => u.id === '3'),
+      photographer: users.find(u => u.id === '1'),
+      designer: users.find(u => u.id === '2'),
+      deadline: new Date('2024-01-30'),
+      createdAt: new Date('2023-12-15'),
+      updatedAt: new Date('2023-12-15'),
       photosCount: 200,
-      designsCount: 15
+      designsCount: 15,
+      files: []
     }
-  ];
+  ]);
+
 
   const getStatusInfo = (status: string) => {
     const statusMap = {
@@ -92,7 +321,7 @@ export function ProjectsList() {
     return statusMap[status as keyof typeof statusMap] || statusMap.planning;
   };
 
-  const filteredProjects = mockProjects.filter(project => {
+  const filteredProjects = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          project.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
@@ -107,7 +336,15 @@ export function ProjectsList() {
     return matchesSearch && matchesStatus;
   });
 
-  const canCreateProject = user?.role === 'admin' || user?.role === 'photographer';
+  const handleCreateProject = async (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newProject: Project = {
+      ...projectData,
+      id: Math.random().toString(36).substr(2, 9),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    setProjects(prev => [...prev, newProject]);
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -118,12 +355,10 @@ export function ProjectsList() {
             Управляйте вашими проектами фотоальбомов
           </p>
         </div>
-        {canCreateProject && (
-          <Button>
+        <Button onClick={() => setShowCreateModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Создать проект
           </Button>
-        )}
       </div>
 
       {/* Фильтры и поиск */}
@@ -182,20 +417,6 @@ export function ProjectsList() {
               
               <CardContent>
                 <div className="space-y-4">
-                  {/* Прогресс */}
-                  <div>
-                    <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-gray-600">Прогресс</span>
-                      <span className="font-medium">{project.progress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${project.progress}%` }}
-                      />
-                    </div>
-                  </div>
-
                   {/* Команда */}
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center space-x-1">
@@ -215,15 +436,21 @@ export function ProjectsList() {
                     </div>
                   </div>
 
-                  {/* Статистика */}
-                  <div className="flex items-center justify-between text-sm">
+                  {/* Статистика и даты */}
+                  <div className="space-y-2 text-sm">
                     <div className="flex items-center space-x-4">
                       <span className="text-gray-600">Фото: {project.photosCount}</span>
                       <span className="text-gray-600">Макеты: {project.designsCount}</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-gray-500">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(project.deadline).toLocaleDateString('ru-RU')}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-1 text-gray-500">
+                        <Calendar className="h-4 w-4" />
+                        <span>Создан: {project.createdAt.toLocaleDateString('ru-RU')}</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-gray-500">
+                        <Calendar className="h-4 w-4" />
+                        <span>Дедлайн: {project.deadline.toLocaleDateString('ru-RU')}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -245,8 +472,8 @@ export function ProjectsList() {
                 ? 'Попробуйте изменить параметры поиска или фильтрации'
                 : 'У вас пока нет проектов. Создайте первый проект, чтобы начать работу.'}
             </p>
-            {canCreateProject && !searchTerm && statusFilter === 'all' && (
-              <Button>
+            {!searchTerm && statusFilter === 'all' && (
+              <Button onClick={() => setShowCreateModal(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Создать первый проект
               </Button>
@@ -254,6 +481,13 @@ export function ProjectsList() {
           </CardContent>
         </Card>
       )}
+
+      {/* Create Project Modal */}
+      <CreateProjectModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleCreateProject}
+      />
     </div>
   );
 }
