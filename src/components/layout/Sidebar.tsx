@@ -39,15 +39,15 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         { id: 'templates', label: 'Шаблоны', icon: Upload },
       ],
       admin: [
+        { id: 'add-employee', label: 'Добавить сотрудника', icon: UserPlus },
         { id: 'users', label: 'Пользователи', icon: Users },
         { id: 'analytics', label: 'Аналитика', icon: BarChart3 },
-        { id: 'add-employee', label: 'Добавить сотрудника', icon: UserPlus },
-        { id: 'employees', label: 'Сотрудники', icon: Users },
-        { id: 'salary', label: 'Зарплаты', icon: DollarSign },
       ]
     };
 
     const commonItems = [
+      { id: 'employees', label: 'Сотрудники', icon: Users },
+      { id: 'salary', label: 'Зарплаты', icon: DollarSign },
       { id: 'calendar', label: 'Календарь', icon: Calendar },
       { id: 'settings', label: 'Настройки', icon: Settings },
     ];
@@ -86,12 +86,12 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                     activeTab === item.id
                       ? 'bg-blue-50 text-blue-700 border-blue-200'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                    // Disable non-admin buttons for non-admin users
-                    (user?.role !== 'admin' && ['add-employee', 'employees', 'salary'].includes(item.id))
+                    // Only disable add-employee for non-admin users
+                    (user?.role !== 'admin' && item.id === 'add-employee')
                       ? 'opacity-50 cursor-not-allowed'
                       : ''
                   )}
-                  disabled={user?.role !== 'admin' && ['add-employee', 'employees', 'salary'].includes(item.id)}
+                  disabled={user?.role !== 'admin' && item.id === 'add-employee'}
                 >
                   <Icon className="h-5 w-5" />
                   <span className="font-medium">{item.label}</span>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Search, Filter, Edit, Trash2, Mail, X, Eye, EyeOff } from 'lucide-react';
+import { Users, Search, Filter, Edit, Trash2, Mail, X, Eye, EyeOff, MessageCircle, Phone } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardContent } from '../ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
@@ -185,6 +185,7 @@ export function EmployeesList() {
   const [roleFilter, setRoleFilter] = useState('all');
   const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [contactEmployee, setContactEmployee] = useState<User | null>(null);
 
   const getRoleLabel = (role: string) => {
     const map = {
@@ -219,26 +220,14 @@ export function EmployeesList() {
     }
   };
 
+  const handleContact = (emp: User) => {
+    setContactEmployee(emp);
+  };
+
   const filteredEmployees = users.filter(emp =>
     (emp.name + emp.email + (emp.department || '')).toLowerCase().includes(searchTerm.toLowerCase()) &&
     (roleFilter === 'all' || emp.role === roleFilter)
   );
-
-  if (user?.role !== 'admin') {
-    return (
-      <div className="p-6">
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="text-red-500 mb-4">
-              <Users className="h-16 w-16 mx-auto" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Доступ запрещен</h3>
-            <p className="text-gray-600">Только администраторы могут просматривать список сотрудников</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -320,18 +309,25 @@ export function EmployeesList() {
                       </div>
                     </div>
                     <div className="mt-4 flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => handleEdit(employee)}>
-                        <Edit className="h-4 w-4 mr-1" />Редактировать
+                      <Button size="sm" variant="outline" onClick={() => handleContact(employee)}>
+                        <MessageCircle className="h-4 w-4 mr-1" />Связаться
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className={`${deleteConfirm === employee.id ? 'bg-red-500 text-white hover:bg-red-600' : 'text-red-600 hover:text-red-700'}`}
-                        onClick={() => handleDelete(employee.id)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        {deleteConfirm === employee.id ? 'Подтвердить' : 'Удалить'}
-                      </Button>
+                      {user?.role === 'admin' && (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => handleEdit(employee)}>
+                            <Edit className="h-4 w-4 mr-1" />Редактировать
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className={`${deleteConfirm === employee.id ? 'bg-red-500 text-white hover:bg-red-600' : 'text-red-600 hover:text-red-700'}`}
+                            onClick={() => handleDelete(employee.id)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            {deleteConfirm === employee.id ? 'Подтвердить' : 'Удалить'}
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -362,6 +358,59 @@ export function EmployeesList() {
           onClose={() => setEditingEmployee(null)}
           onSave={handleSave}
         />
+      )}
+
+      {/* Contact Modal */}
+      {contactEmployee && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Связаться с сотрудником</h2>
+              <button
+                onClick={() => setContactEmployee(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="flex items-center space-x-4 mb-6">
+                <img
+                  src={contactEmployee.avatar || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop'}
+                  alt={contactEmployee.name}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{contactEmployee.name}</h3>
+                  <p className="text-gray-600">{contactEmployee.position || 'Не указана'}</p>
+                  <p className="text-sm text-gray-500">{contactEmployee.department || 'Не указан'}</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <a
+                  href={`mailto:${contactEmployee.email}`}
+                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <Mail className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="font-medium text-gray-900">Email</p>
+                    <p className="text-sm text-gray-600">{contactEmployee.email}</p>
+                  </div>
+                </a>
+                <a
+                  href={`tel:+7${Math.floor(Math.random() * 9000000000) + 1000000000}`}
+                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <Phone className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="font-medium text-gray-900">Телефон</p>
+                    <p className="text-sm text-gray-600">+7 {Math.floor(Math.random() * 900) + 100} {Math.floor(Math.random() * 900) + 100}-{Math.floor(Math.random() * 90) + 10}-{Math.floor(Math.random() * 90) + 10}</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

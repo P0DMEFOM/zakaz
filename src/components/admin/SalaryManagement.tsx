@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Search, Filter, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
+import { DollarSign, Search, Filter, TrendingUp, TrendingDown, Calendar, MessageCircle, Phone, Mail, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
@@ -23,6 +23,7 @@ export function SalaryManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMonth, setSelectedMonth] = useState('2024-02');
+  const [contactEmployee, setContactEmployee] = useState<SalaryRecord | null>(null);
 
   // Генерируем записи о зарплатах на основе реальных пользователей
   const mockSalaryRecords: SalaryRecord[] = users
@@ -71,47 +72,32 @@ export function SalaryManagement() {
   const totalBonuses = filteredRecords.reduce((sum, record) => sum + record.bonus, 0);
   const totalDeductions = filteredRecords.reduce((sum, record) => sum + record.deductions, 0);
 
-  if (user?.role !== 'admin') {
-    return (
-      <div className="p-6">
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="text-red-500 mb-4">
-              <DollarSign className="h-16 w-16 mx-auto" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Доступ запрещен</h3>
-            <p className="text-gray-600">
-              Только администраторы могут управлять зарплатами
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const handleContact = (record: SalaryRecord) => {
+    setContactEmployee(record);
+  };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Управление зарплатами</h1>
-          <p className="text-gray-600 mt-1">
-            Просмотр и управление выплатами сотрудникам
-          </p>
+    <>
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Зарплаты сотрудников</h1>
+            <p className="text-gray-600 mt-1">
+              Информация о выплатах сотрудникам
+            </p>
+          </div>
+          {user?.role === 'admin' && (
+            <div className="flex space-x-3">
+              <Button variant="outline">
+                <Calendar className="h-4 w-4 mr-2" />
+                Экспорт отчета
+              </Button>
+            </div>
+          )}
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline">
-            <Calendar className="h-4 w-4 mr-2" />
-            Экспорт отчета
-          </Button>
-          <Button>
-            <DollarSign className="h-4 w-4 mr-2" />
-            Массовая выплата
-          </Button>
-        </div>
-      </div>
 
-      {/* Статистика */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Статистика */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <div className="flex items-center justify-between">
             <div>
@@ -164,11 +150,11 @@ export function SalaryManagement() {
               <Calendar className="h-6 w-6" />
             </div>
           </div>
-        </Card>
-      </div>
+          </div>
+        </div>
 
-      {/* Фильтры */}
-      <Card>
+        {/* Фильтры */}
+        <Card>
         <CardContent className="p-4">
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
@@ -203,66 +189,129 @@ export function SalaryManagement() {
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Таблица зарплат */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Зарплаты за {new Date(selectedMonth + '-01').toLocaleDateString('ru-RU', { year: 'numeric', month: 'long' })}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Сотрудник</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Отдел</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-700">Оклад</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-700">Премия</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-700">Удержания</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-700">К выплате</th>
-                  <th className="text-center py-3 px-4 font-medium text-gray-700">Статус</th>
-                  <th className="text-center py-3 px-4 font-medium text-gray-700">Действия</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRecords.map((record) => {
-                  const statusInfo = getStatusInfo(record.status);
-                  return (
-                    <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4">
-                        <div>
-                          <p className="font-medium text-gray-900">{record.employeeName}</p>
-                          <p className="text-sm text-gray-500">{record.role}</p>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">{record.department}</td>
-                      <td className="py-3 px-4 text-right font-medium">
-                        {record.baseSalary.toLocaleString('ru-RU')} ₽
-                      </td>
-                      <td className="py-3 px-4 text-right text-green-600 font-medium">
-                        +{record.bonus.toLocaleString('ru-RU')} ₽
-                      </td>
-                      <td className="py-3 px-4 text-right text-red-600 font-medium">
-                        -{record.deductions.toLocaleString('ru-RU')} ₽
-                      </td>
-                      <td className="py-3 px-4 text-right font-bold text-gray-900">
-                        {record.totalSalary.toLocaleString('ru-RU')} ₽
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
-                          {statusInfo.label}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex justify-center space-x-2">
-                          <Button size="sm" variant="outline">
-                            Детали
+        {/* Таблица зарплат */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Зарплаты за {new Date(selectedMonth + '-01').toLocaleDateString('ru-RU', { year: 'numeric', month: 'long' })}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-medium text-gray-700">Сотрудник</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-700">Отдел</th>
+                    <th className="text-right py-3 px-4 font-medium text-gray-700">Оклад</th>
+                    <th className="text-right py-3 px-4 font-medium text-gray-700">Премия</th>
+                    <th className="text-right py-3 px-4 font-medium text-gray-700">Удержания</th>
+                    <th className="text-right py-3 px-4 font-medium text-gray-700">К выплате</th>
+                    <th className="text-center py-3 px-4 font-medium text-gray-700">Статус</th>
+                    <th className="text-center py-3 px-4 font-medium text-gray-700">Контакт</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredRecords.map((record) => {
+                    const statusInfo = getStatusInfo(record.status);
+                    return (
+                      <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{record.employeeName}</p>
+                            <p className="text-sm text-gray-500">{record.role}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 text-gray-600">{record.department}</td>
+                        <td className="py-3 px-4 text-right font-medium">
+                          {record.baseSalary.toLocaleString('ru-RU')} ₽
+                        </td>
+                        <td className="py-3 px-4 text-right text-green-600 font-medium">
+                          +{record.bonus.toLocaleString('ru-RU')} ₽
+                        </td>
+                        <td className="py-3 px-4 text-right text-red-600 font-medium">
+                          -{record.deductions.toLocaleString('ru-RU')} ₽
+                        </td>
+                        <td className="py-3 px-4 text-right font-bold text-gray-900">
+                          {record.totalSalary.toLocaleString('ru-RU')} ₽
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
+                            {statusInfo.label}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <Button size="sm" variant="outline" onClick={() => handleContact(record)}>
+                            <MessageCircle className="h-4 w-4 mr-1" />
+                            Связаться
                           </Button>
-                          {record.status === 'pending' && (
-                            <Button size="sm">
-                              Выплатить
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Contact Modal */}
+      {contactEmployee && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Связаться с сотрудником</h2>
+              <button
+                onClick={() => setContactEmployee(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span className="text-xl font-semibold text-gray-600">
+                    {contactEmployee.employeeName.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{contactEmployee.employeeName}</h3>
+                  <p className="text-gray-600">{contactEmployee.role}</p>
+                  <p className="text-sm text-gray-500">{contactEmployee.department}</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <a
+                  href={`mailto:${users.find(u => u.id === contactEmployee.employeeId)?.email}`}
+                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <Mail className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="font-medium text-gray-900">Email</p>
+                    <p className="text-sm text-gray-600">{users.find(u => u.id === contactEmployee.employeeId)?.email}</p>
+                  </div>
+                </a>
+                <a
+                  href={`tel:+7${Math.floor(Math.random() * 9000000000) + 1000000000}`}
+                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <Phone className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="font-medium text-gray-900">Телефон</p>
+                    <p className="text-sm text-gray-600">+7 {Math.floor(Math.random() * 900) + 100} {Math.floor(Math.random() * 900) + 100}-{Math.floor(Math.random() * 90) + 10}-{Math.floor(Math.random() * 90) + 10}</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
                             </Button>
                           )}
                         </div>
