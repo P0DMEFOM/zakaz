@@ -62,8 +62,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return false;
     } catch (error) {
       console.error('Login error:', error);
+    }
 
     return false;
+  }
   const register = async (): Promise<boolean> => {
     // Registration is disabled - only admins can create accounts
     return false;
