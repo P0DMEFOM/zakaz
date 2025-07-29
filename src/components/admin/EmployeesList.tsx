@@ -387,8 +387,8 @@ export function EmployeesList() {
               </p>
             </CardContent>
           </Card>
-        )}
-      </div>
+        ))}
+      </div> 
 
       {/* Модальное окно редактирования */}
       {editingEmployee && (
