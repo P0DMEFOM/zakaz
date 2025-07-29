@@ -4,7 +4,7 @@ import { User } from '../types/user';
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  register: () => Promise<boolean>;
+  register: (name: string, email: string, password: string, phone: string, telegram: string) => Promise<boolean>;
   logout: () => void;
   users: User[];
   addUser: (user: Omit<User, 'id'>) => void;
@@ -42,33 +42,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      // Check for admin credentials
-      if (email === 'admin' && password === 'admin') {
-        const adminUser = users.find(u => u.email === 'admin');
-        if (adminUser) {
-          setUser(adminUser);
-          return true;
-        }
-      }
-
-      // Check for regular users
-      const foundUser = users.find(u => u.email === email);
-      if (foundUser) {
-        setUser(foundUser);
+    // Check for admin credentials
+    if (email === 'admin' && password === 'admin') {
+      const adminUser = users.find(u => u.email === 'admin');
+      if (adminUser) {
+        setUser(adminUser);
         return true;
       }
+    }
 
-      return false;
-    } catch (error) {
-      console.error('Login error:', error);
+    // Check for regular users
+    const foundUser = users.find(u => u.email === email);
+    if (foundUser) {
+      setUser(foundUser);
+      return true;
     }
 
     return false;
-  }
-  const register = async (): Promise<boolean> => {
-    // Registration is disabled - only admins can create accounts
-    return false;
+  };
+
+  const register = async (name: string, email: string, password: string, phone: string, telegram: string): Promise<boolean> => {
+    // Check if user already exists
+    if (users.some(u => u.email === email)) {
+      return false;
+    }
+
+    const newUser: User = {
+      id: Date.now().toString(),
+      name,
+      email,
+      role: 'photographer',
+      department: 'Фотография',
+      salary: 30000,
+      phone,
+      telegram
+    };
+
+    setUsers(prev => [...prev, newUser]);
+    setUser(newUser);
+    return true;
   };
 
   const logout = () => {
