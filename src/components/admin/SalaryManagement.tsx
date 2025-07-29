@@ -219,9 +219,23 @@ export function SalaryManagement() {
                   <Phone className="h-5 w-5 text-gray-500" />
                   <div>
                     <p className="font-medium text-gray-900">Телефон</p>
-                    <p className="text-sm text-gray-600">+7 {Math.floor(Math.random() * 900) + 100} {Math.floor(Math.random() * 900) + 100}-{Math.floor(Math.random() * 90) + 10}-{Math.floor(Math.random() * 90) + 10}</p>
+                    <p className="text-sm text-gray-600">{users.find(u => u.id === contactEmployee.employeeId)?.phone || 'Не указан'}</p>
                   </div>
                 </a>
+                {users.find(u => u.id === contactEmployee.employeeId)?.telegram && (
+                  <a
+                    href={`https://t.me/${users.find(u => u.id === contactEmployee.employeeId)?.telegram?.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <MessageCircle className="h-5 w-5 text-gray-500" />
+                    <div>
+                      <p className="font-medium text-gray-900">Telegram</p>
+                      <p className="text-sm text-gray-600">{users.find(u => u.id === contactEmployee.employeeId)?.telegram}</p>
+                    </div>
+                  </a>
+                )}
               </div>
             </div>
           </div>
