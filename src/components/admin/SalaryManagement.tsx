@@ -150,8 +150,7 @@ export function SalaryManagement() {
               <Calendar className="h-6 w-6" />
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
         
         {/* Фильтры */}
         <Card>
