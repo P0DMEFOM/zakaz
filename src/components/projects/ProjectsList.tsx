@@ -23,8 +23,10 @@ export function ProjectsList() {
     {
       id: '1',
       title: 'Свадебный альбом "Анна & Михаил"',
+      albumType: 'Свадебный альбом',
       description: 'Создание премиального свадебного альбома с 150 фотографиями',
       status: 'in-progress',
+      manager: { name: 'Елена Сидорова', id: '3' },
       photographer: { name: 'Анна Иванова', id: '1' },
       designer: { name: 'Михаил Петров', id: '2' },
       deadline: '2024-02-15',
@@ -36,8 +38,10 @@ export function ProjectsList() {
     {
       id: '2',
       title: 'Детская фотосессия "Семья Петровых"',
+      albumType: 'Детский альбом',
       description: 'Семейный альбом с детской фотосессией в студии',
       status: 'planning',
+      manager: { name: 'Елена Сидорова', id: '3' },
       photographer: { name: 'Анна Иванова', id: '1' },
       designer: null,
       deadline: '2024-02-20',
@@ -49,8 +53,10 @@ export function ProjectsList() {
     {
       id: '3',
       title: 'Корпоративный альбом "ООО Рога и копыта"',
+      albumType: 'Корпоративный альбом',
       description: 'Презентационный альбом для корпоративных клиентов',
       status: 'review',
+      manager: { name: 'Елена Сидорова', id: '3' },
       photographer: { name: 'Анна Иванова', id: '1' },
       designer: { name: 'Михаил Петров', id: '2' },
       deadline: '2024-02-10',
@@ -62,8 +68,10 @@ export function ProjectsList() {
     {
       id: '4',
       title: 'Выпускной альбом школы №15',
+      albumType: 'Выпускной альбом',
       description: 'Выпускной альбом для 11 класса с групповыми и индивидуальными фото',
       status: 'completed',
+      manager: { name: 'Елена Сидорова', id: '3' },
       photographer: { name: 'Анна Иванова', id: '1' },
       designer: { name: 'Михаил Петров', id: '2' },
       deadline: '2024-01-30',
@@ -162,6 +170,7 @@ export function ProjectsList() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg mb-2">{project.title}</CardTitle>
+                    <p className="text-sm font-medium text-blue-600 mb-1">{project.albumType}</p>
                     <p className="text-gray-600 text-sm">{project.description}</p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center ${statusInfo.color}`}>
@@ -188,13 +197,20 @@ export function ProjectsList() {
                   </div>
 
                   {/* Команда */}
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center space-x-1">
+                      <User className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Менеджер:</span>
+                      <span className="text-gray-600">{project.manager?.name || 'Не назначен'}</span>
+                    </div>
                     <div className="flex items-center space-x-1">
                       <Camera className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Фотограф:</span>
                       <span className="text-gray-600">{project.photographer?.name || 'Не назначен'}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Palette className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Дизайнер:</span>
                       <span className="text-gray-600">{project.designer?.name || 'Не назначен'}</span>
                     </div>
                   </div>

@@ -13,13 +13,18 @@ export interface User {
 export interface Project {
   id: string;
   title: string;
+  albumType: string;
   description: string;
   status: 'planning' | 'in-progress' | 'review' | 'completed';
+  manager?: User;
   photographer?: User;
   designer?: User;
   deadline: Date;
   createdAt: Date;
   updatedAt: Date;
+  progress: number;
+  photosCount: number;
+  designsCount: number;
   files: ProjectFile[];
 }
 
