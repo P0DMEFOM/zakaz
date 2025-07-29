@@ -37,8 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       department: 'Управление',
       salary: 50000,
       phone: '+7 (999) 123-45-67',
-      telegram: '@admin',
-      createdAt: new Date()
+      telegram: '@admin'
     }
   ]);
 
