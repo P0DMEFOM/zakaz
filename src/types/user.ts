@@ -2,6 +2,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  telegram?: string;
   role: 'photographer' | 'designer' | 'admin';
   department?: string;
   position?: string;

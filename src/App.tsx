@@ -10,6 +10,7 @@ import { AddEmployee } from './components/admin/AddEmployee';
 import { EmployeesList } from './components/admin/EmployeesList';
 import { SalaryManagement } from './components/admin/SalaryManagement';
 import { Calendar } from './components/calendar/Calendar';
+import { Script } from './components/script/Script';
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -38,33 +39,8 @@ function AppContent() {
         return <UploadArea />;
       case 'calendar':
         return <Calendar />;
-      case 'users':
-        return (
-          <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Пользователи</h1>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-              <p className="text-gray-600">Управление пользователями доступно для администраторов</p>
-            </div>
-          </div>
-        );
-      case 'analytics':
-        return (
-          <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Аналитика</h1>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-              <p className="text-gray-600">Отчеты и аналитика будут доступны в следующих версиях</p>
-            </div>
-          </div>
-        );
-      case 'settings':
-        return (
-          <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Настройки</h1>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-              <p className="text-gray-600">Настройки профиля и системы</p>
-            </div>
-          </div>
-        );
+      case 'script':
+        return <Script />;
       default:
         return <Dashboard />;
     }

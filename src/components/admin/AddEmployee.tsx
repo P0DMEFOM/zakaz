@@ -9,6 +9,8 @@ export function AddEmployee() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    telegram: '',
     password: '',
     role: 'photographer',
     department: '',
@@ -35,6 +37,8 @@ export function AddEmployee() {
       await addUser({
         name: formData.name,
         email: formData.email,
+        phone: formData.phone,
+        telegram: formData.telegram,
         role: formData.role as 'photographer' | 'designer' | 'admin',
         department: formData.department,
         position: formData.position,
@@ -46,6 +50,8 @@ export function AddEmployee() {
       setFormData({
         name: '',
         email: '',
+        phone: '',
+        telegram: '',
         password: '',
         role: 'photographer',
         department: '',
@@ -154,6 +160,36 @@ export function AddEmployee() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Телефон
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+7 (495) 123-45-67"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Telegram
+                  </label>
+                  <input
+                    type="text"
+                    name="telegram"
+                    value={formData.telegram}
+                    onChange={handleChange}
+                    placeholder="@username"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>

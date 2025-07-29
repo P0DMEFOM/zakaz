@@ -5,12 +5,11 @@ import {
   Upload, 
   Calendar, 
   Users, 
-  Settings, 
   Camera,
   Palette,
-  BarChart3,
   UserPlus,
-  DollarSign
+  DollarSign,
+  MessageCircle
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { cn } from '../../utils/cn';
@@ -40,8 +39,6 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       ],
       admin: [
         { id: 'add-employee', label: 'Добавить сотрудника', icon: UserPlus },
-        { id: 'users', label: 'Пользователи', icon: Users },
-        { id: 'analytics', label: 'Аналитика', icon: BarChart3 },
       ]
     };
 
@@ -49,7 +46,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       { id: 'employees', label: 'Сотрудники', icon: Users },
       { id: 'salary', label: 'Зарплаты', icon: DollarSign },
       { id: 'calendar', label: 'Календарь', icon: Calendar },
-      { id: 'settings', label: 'Настройки', icon: Settings },
+      { id: 'script', label: 'Скрипт', icon: MessageCircle },
     ];
 
     return [

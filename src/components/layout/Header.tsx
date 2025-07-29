@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Search, LogOut, Settings } from 'lucide-react';
+import { Search, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 
@@ -21,19 +21,6 @@ export function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-              3
-            </span>
-          </button>
-
-          <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-            <Settings className="h-5 w-5" />
-          </button>
-
-          <div className="w-px h-6 bg-gray-300" />
-
           <div className="flex items-center space-x-3">
             <img
               src={user?.avatar || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop'}

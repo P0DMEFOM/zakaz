@@ -16,6 +16,8 @@ function EditEmployeeModal({ employee, isOpen, onClose, onSave }: EditModalProps
   const [formData, setFormData] = useState({
     name: employee.name,
     email: employee.email,
+    phone: employee.phone || '',
+    telegram: employee.telegram || '',
     role: employee.role,
     department: employee.department || '',
     position: employee.position || '',
@@ -32,6 +34,8 @@ function EditEmployeeModal({ employee, isOpen, onClose, onSave }: EditModalProps
     const updateData: Partial<User> = {
       name: formData.name,
       email: formData.email,
+      phone: formData.phone,
+      telegram: formData.telegram,
       role: formData.role,
       department: formData.department,
       position: formData.position,
@@ -112,6 +116,32 @@ function EditEmployeeModal({ employee, isOpen, onClose, onSave }: EditModalProps
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
+            </div>
+          </div>
+
+          {/* Телефон и Telegram */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+7 (495) 123-45-67"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Telegram</label>
+              <input
+                type="text"
+                name="telegram"
+                value={formData.telegram}
+                onChange={handleChange}
+                placeholder="@username"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
           </div>
 
