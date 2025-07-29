@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function AddEmployee() {
-  const { user } = useAuth();
+  const { user, addUser } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,6 +18,7 @@ export function AddEmployee() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,9 +29,18 @@ export function AddEmployee() {
     }
 
     setLoading(true);
+    setError('');
     
-    // Симуляция создания пользователя
-    setTimeout(() => {
+    try {
+      await addUser({
+        name: formData.name,
+        email: formData.email,
+        role: formData.role as 'photographer' | 'designer' | 'admin',
+        department: formData.department,
+        position: formData.position,
+        salary: formData.salary ? parseInt(formData.salary) : undefined
+      });
+      
       setLoading(false);
       setSuccess(true);
       setFormData({
@@ -44,7 +54,10 @@ export function AddEmployee() {
       });
       
       setTimeout(() => setSuccess(false), 3000);
-    }, 1000);
+    } catch (err) {
+      setError('Ошибка при создании сотрудника');
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -90,6 +103,19 @@ export function AddEmployee() {
             <div className="ml-3">
               <p className="text-green-800 font-medium">Сотрудник успешно добавлен!</p>
               <p className="text-green-700 text-sm">Данные для входа отправлены на указанный email</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="text-red-600">
+              <UserPlus className="h-5 w-5" />
+            </div>
+            <div className="ml-3">
+              <p className="text-red-800 font-medium">{error}</p>
             </div>
           </div>
         </div>

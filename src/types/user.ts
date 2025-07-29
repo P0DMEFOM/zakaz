@@ -3,6 +3,9 @@ export interface User {
   name: string;
   email: string;
   role: 'photographer' | 'designer' | 'admin';
+  department?: string;
+  position?: string;
+  salary?: number;
   avatar?: string;
   createdAt: Date;
 }

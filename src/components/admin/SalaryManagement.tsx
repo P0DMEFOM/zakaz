@@ -19,65 +19,37 @@ interface SalaryRecord {
 }
 
 export function SalaryManagement() {
-  const { user } = useAuth();
+  const { user, users } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMonth, setSelectedMonth] = useState('2024-02');
 
-  const mockSalaryRecords: SalaryRecord[] = [
-    {
-      id: '1',
-      employeeId: '1',
-      employeeName: 'Анна Иванова',
-      role: 'Фотограф',
-      department: 'Фотостудия',
-      baseSalary: 75000,
-      bonus: 10000,
-      deductions: 2000,
-      totalSalary: 83000,
-      paymentDate: '2024-02-01',
-      status: 'paid'
-    },
-    {
-      id: '2',
-      employeeId: '2',
-      employeeName: 'Михаил Петров',
-      role: 'Дизайнер',
-      department: 'Дизайн',
-      baseSalary: 80000,
-      bonus: 15000,
-      deductions: 1500,
-      totalSalary: 93500,
-      paymentDate: '2024-02-01',
-      status: 'paid'
-    },
-    {
-      id: '3',
-      employeeId: '3',
-      employeeName: 'Елена Сидорова',
-      role: 'Администратор',
-      department: 'Администрация',
-      baseSalary: 90000,
-      bonus: 5000,
-      deductions: 3000,
-      totalSalary: 92000,
-      paymentDate: '2024-02-01',
-      status: 'processing'
-    },
-    {
-      id: '4',
-      employeeId: '4',
-      employeeName: 'Дмитрий Козлов',
-      role: 'Фотограф',
-      department: 'Фотостудия',
-      baseSalary: 60000,
-      bonus: 5000,
-      deductions: 1000,
-      totalSalary: 64000,
-      paymentDate: '2024-02-01',
-      status: 'pending'
-    }
-  ];
+  // Генерируем записи о зарплатах на основе реальных пользователей
+  const mockSalaryRecords: SalaryRecord[] = users
+    .filter(user => user.salary)
+    .map(user => {
+      const bonus = Math.floor(Math.random() * 20000);
+      const deductions = Math.floor(Math.random() * 5000);
+      const roleLabels = {
+        photographer: 'Фотограф',
+        designer: 'Дизайнер',
+        admin: 'Администратор'
+      };
+      
+      return {
+        id: user.id,
+        employeeId: user.id,
+        employeeName: user.name,
+        role: roleLabels[user.role],
+        department: user.department || 'Не указан',
+        baseSalary: user.salary!,
+        bonus,
+        deductions,
+        totalSalary: user.salary! + bonus - deductions,
+        paymentDate: '2024-02-01',
+        status: ['paid', 'processing', 'pending'][Math.floor(Math.random() * 3)] as 'paid' | 'processing' | 'pending'
+      };
+    });
 
   const getStatusInfo = (status: string) => {
     const statusMap = {
