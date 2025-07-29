@@ -152,6 +152,7 @@ export function SalaryManagement() {
           </div>
         </div>
       </Card>
+        
         {/* Фильтры */}
         <Card>
         <CardContent className="p-4">
