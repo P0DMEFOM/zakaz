@@ -8,7 +8,9 @@ import {
   Settings, 
   Camera,
   Palette,
-  BarChart3
+  BarChart3,
+  UserPlus,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { cn } from '../../utils/cn';
@@ -39,6 +41,9 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       admin: [
         { id: 'users', label: 'Пользователи', icon: Users },
         { id: 'analytics', label: 'Аналитика', icon: BarChart3 },
+        { id: 'add-employee', label: 'Добавить сотрудника', icon: UserPlus },
+        { id: 'employees', label: 'Сотрудники', icon: Users },
+        { id: 'salary', label: 'Зарплаты', icon: DollarSign },
       ]
     };
 
@@ -80,8 +85,13 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                     'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors',
                     activeTab === item.id
                       ? 'bg-blue-50 text-blue-700 border-blue-200'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    // Disable non-admin buttons for non-admin users
+                    (user?.role !== 'admin' && ['add-employee', 'employees', 'salary'].includes(item.id))
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
                   )}
+                  disabled={user?.role !== 'admin' && ['add-employee', 'employees', 'salary'].includes(item.id)}
                 >
                   <Icon className="h-5 w-5" />
                   <span className="font-medium">{item.label}</span>

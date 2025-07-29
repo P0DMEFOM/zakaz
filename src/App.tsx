@@ -6,6 +6,9 @@ import { Header } from './components/layout/Header';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { ProjectsList } from './components/projects/ProjectsList';
 import { UploadArea } from './components/upload/UploadArea';
+import { AddEmployee } from './components/admin/AddEmployee';
+import { EmployeesList } from './components/admin/EmployeesList';
+import { SalaryManagement } from './components/admin/SalaryManagement';
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -21,6 +24,12 @@ function AppContent() {
         return <Dashboard />;
       case 'projects':
         return <ProjectsList />;
+      case 'add-employee':
+        return <AddEmployee />;
+      case 'employees':
+        return <EmployeesList />;
+      case 'salary':
+        return <SalaryManagement />;
       case 'upload':
       case 'gallery':
       case 'design':
