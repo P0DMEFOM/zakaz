@@ -243,72 +243,7 @@ export function ProjectsList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: '1',
-      title: 'Свадебный альбом "Анна & Михаил"',
-      albumType: 'Свадебный альбом',
-      description: 'Создание премиального свадебного альбома с 150 фотографиями',
-      status: 'in-progress',
-      manager: users.find(u => u.id === '3'),
-      photographer: users.find(u => u.id === '1'),
-      designer: users.find(u => u.id === '2'),
-      deadline: new Date('2024-02-15'),
-      createdAt: new Date('2024-01-10'),
-      updatedAt: new Date('2024-01-10'),
-      photosCount: 150,
-      designsCount: 8,
-      files: []
-    },
-    {
-      id: '2',
-      title: 'Детская фотосессия "Семья Петровых"',
-      albumType: 'Детский альбом',
-      description: 'Семейный альбом с детской фотосессией в студии',
-      status: 'planning',
-      manager: users.find(u => u.id === '3'),
-      photographer: users.find(u => u.id === '1'),
-      designer: undefined,
-      deadline: new Date('2024-02-20'),
-      createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-15'),
-      photosCount: 89,
-      designsCount: 0,
-      files: []
-    },
-    {
-      id: '3',
-      title: 'Корпоративный альбом "ООО Рога и копыта"',
-      albumType: 'Корпоративный альбом',
-      description: 'Презентационный альбом для корпоративных клиентов',
-      status: 'review',
-      manager: users.find(u => u.id === '3'),
-      photographer: users.find(u => u.id === '1'),
-      designer: users.find(u => u.id === '2'),
-      deadline: new Date('2024-02-10'),
-      createdAt: new Date('2024-01-05'),
-      updatedAt: new Date('2024-01-05'),
-      photosCount: 45,
-      designsCount: 12,
-      files: []
-    },
-    {
-      id: '4',
-      title: 'Выпускной альбом школы №15',
-      albumType: 'Выпускной альбом',
-      description: 'Выпускной альбом для 11 класса с групповыми и индивидуальными фото',
-      status: 'completed',
-      manager: users.find(u => u.id === '3'),
-      photographer: users.find(u => u.id === '1'),
-      designer: users.find(u => u.id === '2'),
-      deadline: new Date('2024-01-30'),
-      createdAt: new Date('2023-12-15'),
-      updatedAt: new Date('2023-12-15'),
-      photosCount: 200,
-      designsCount: 15,
-      files: []
-    }
-  ]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
 
   const getStatusInfo = (status: string) => {
