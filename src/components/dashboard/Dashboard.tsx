@@ -58,27 +58,33 @@ export function Dashboard() {
     {
       id: '1',
       title: 'Свадебный альбом "Анна & Михаил"',
+      albumType: 'Свадебный альбом',
       status: 'В работе',
       deadline: '2024-02-15',
       progress: 75,
+      manager: 'Елена Сидорова',
       photographer: 'Анна Иванова',
       designer: 'Михаил Петров'
     },
     {
       id: '2',
       title: 'Детская фотосессия "Семья Петровых"',
+      albumType: 'Детский альбом',
       status: 'Ожидает дизайна',
       deadline: '2024-02-20',
       progress: 40,
+      manager: 'Елена Сидорова',
       photographer: 'Анна Иванова',
       designer: 'Не назначен'
     },
     {
       id: '3',
       title: 'Корпоративный альбом "ООО Рога и копыта"',
+      albumType: 'Корпоративный альбом',
       status: 'На согласовании',
       deadline: '2024-02-10',
       progress: 90,
+      manager: 'Елена Сидорова',
       photographer: 'Анна Иванова',
       designer: 'Михаил Петров'
     }
@@ -154,10 +160,14 @@ export function Dashboard() {
               <div key={project.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                 <div className="flex-1">
                   <h4 className="font-medium text-gray-900">{project.title}</h4>
+                  <p className="text-sm text-blue-600 font-medium">{project.albumType}</p>
                   <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                    <span>Менеджер: {project.manager}</span>
                     <span>Фотограф: {project.photographer}</span>
                     <span>Дизайнер: {project.designer}</span>
-                    <span>Дедлайн: {new Date(project.deadline).toLocaleDateString('ru-RU')}</span>
+                  </div>
+                  <div className="mt-1 text-sm text-gray-500">
+                    Дедлайн: {new Date(project.deadline).toLocaleDateString('ru-RU')}
                   </div>
                   <div className="mt-3">
                     <div className="flex items-center justify-between text-sm mb-1">
